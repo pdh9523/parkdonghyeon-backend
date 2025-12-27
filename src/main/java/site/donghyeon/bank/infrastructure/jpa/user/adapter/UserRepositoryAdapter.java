@@ -4,9 +4,9 @@ import org.springframework.stereotype.Repository;
 import site.donghyeon.bank.domain.user.User;
 import site.donghyeon.bank.application.user.repository.UserRepository;
 import site.donghyeon.bank.infrastructure.jpa.user.entity.UserJpaEntity;
-import site.donghyeon.bank.infrastructure.jpa.user.exception.UserNotFoundException;
 import site.donghyeon.bank.infrastructure.jpa.user.mapper.UserMapper;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,10 +19,9 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public User findById(UUID userId) {
-        UserJpaEntity entity = userJpaRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("id", userId));
-        return UserMapper.toDomain(entity);
+    public Optional<User> findById(UUID userId) {
+        return userJpaRepository.findById(userId)
+                .map(UserMapper::toDomain);
     }
 
     @Override

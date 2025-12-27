@@ -3,6 +3,7 @@ package site.donghyeon.bank.application.user;
 import org.springframework.stereotype.Service;
 import site.donghyeon.bank.application.user.command.GetUserInfoCommand;
 import site.donghyeon.bank.application.user.command.RegisterCommand;
+import site.donghyeon.bank.application.user.exception.UserNotFoundException;
 import site.donghyeon.bank.application.user.result.GetUserInfoResult;
 import site.donghyeon.bank.application.user.result.RegisterResult;
 import site.donghyeon.bank.domain.user.User;
@@ -36,6 +37,7 @@ public class UserService implements UserUseCase {
     public GetUserInfoResult getUserInfo(GetUserInfoCommand command) {
         return GetUserInfoResult.from(
                 userRepository.findById(command.userId())
+                        .orElseThrow(() -> new UserNotFoundException("id", command.userId()))
         );
     }
 }

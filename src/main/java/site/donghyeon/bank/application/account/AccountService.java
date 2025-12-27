@@ -57,7 +57,9 @@ public class AccountService implements AccountUseCase {
 
     @Override
     public void closeAccount(CloseAccountCommand command) {
-        Account account = accountRepository.findById(command.accountId());
+        Account account = accountRepository.findById(command.accountId())
+                .orElseThrow(() -> new AccountNotFoundException(command.accountId()));
+        
         //TODO: 잔액 검증(선택)
         account.close(command.userId());
 
@@ -93,7 +95,9 @@ public class AccountService implements AccountUseCase {
         }
 
         // 2. 잔고 조회
-        Account account = accountRepository.findById(command.fromAccountId());
+        Account account = accountRepository.findById(command.fromAccountId())
+                .orElseThrow(() -> new AccountNotFoundException(command.fromAccountId()));
+
         if (withdrawalAmount.exceeded(account.getBalance())) {
             throw new InsufficientBalanceException(account.getBalance(), withdrawalAmount);
         }

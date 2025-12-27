@@ -4,9 +4,9 @@ import org.springframework.stereotype.Repository;
 import site.donghyeon.bank.domain.account.Account;
 import site.donghyeon.bank.application.account.repository.AccountRepository;
 import site.donghyeon.bank.infrastructure.jpa.account.entity.AccountJpaEntity;
-import site.donghyeon.bank.infrastructure.jpa.account.exception.AccountNotFoundException;
 import site.donghyeon.bank.infrastructure.jpa.account.mapper.AccountMapper;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,10 +19,9 @@ public class AccountRepositoryAdapter implements AccountRepository {
     }
 
     @Override
-    public Account findById(UUID accountId) {
-        AccountJpaEntity entity = accountJpaRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
-        return AccountMapper.toDomain(entity);
+    public Optional<Account> findById(UUID accountId) {
+        return accountJpaRepository.findById(accountId)
+                .map(AccountMapper::toDomain);
     }
 
     @Override
