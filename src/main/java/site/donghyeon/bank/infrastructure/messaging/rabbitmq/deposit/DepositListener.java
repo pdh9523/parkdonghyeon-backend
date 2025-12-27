@@ -6,17 +6,16 @@ import site.donghyeon.bank.application.account.executor.DepositExecutor;
 import site.donghyeon.bank.application.account.task.DepositTask;
 
 @Component
-public class DepositCommandListener {
+public class DepositListener {
 
     private final DepositExecutor depositExecutor;
 
-    public DepositCommandListener(DepositExecutor depositExecutor) {
+    public DepositListener(DepositExecutor depositExecutor) {
         this.depositExecutor = depositExecutor;
     }
 
     @RabbitListener(queues = DepositRabbitMQConfig.DEPOSIT_QUEUE)
-    public void handle(DepositCommandMessage msg) {
-        System.out.println("handler");
+    public void handle(DepositMessage msg) {
         depositExecutor.execute(DepositTask.from(msg));
     }
 }

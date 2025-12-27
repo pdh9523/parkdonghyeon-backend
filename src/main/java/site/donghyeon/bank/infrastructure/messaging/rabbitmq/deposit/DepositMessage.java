@@ -4,13 +4,13 @@ import site.donghyeon.bank.application.account.task.DepositTask;
 
 import java.util.UUID;
 
-public record DepositCommandMessage(
+public record DepositMessage(
         UUID txId,
         UUID toAccountId,
         long amount
 ) {
-    public static DepositCommandMessage from(DepositTask task) {
-        return new DepositCommandMessage(
+    public static DepositMessage from(DepositTask task) {
+        return new DepositMessage(
                 task.txId(),
                 task.toAccountId(),
                 task.amount().amount()

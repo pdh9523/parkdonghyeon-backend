@@ -5,17 +5,17 @@ import org.springframework.stereotype.Component;
 import site.donghyeon.bank.application.account.task.DepositTask;
 
 @Component
-public class DepositCommandPublisher {
+public class DepositPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public DepositCommandPublisher(RabbitTemplate rabbitTemplate) {
+    public DepositPublisher(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
     public void publish(DepositTask task) {
-        DepositCommandMessage message =
-                new DepositCommandMessage(
+        DepositMessage message =
+                new DepositMessage(
                         task.txId(),
                         task.toAccountId(),
                         task.amount().amount()
