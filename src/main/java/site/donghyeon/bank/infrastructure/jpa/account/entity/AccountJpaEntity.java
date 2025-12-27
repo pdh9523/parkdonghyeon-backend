@@ -1,14 +1,25 @@
 package site.donghyeon.bank.infrastructure.jpa.account.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.type.SqlTypes;
 import site.donghyeon.bank.domain.account.enums.AccountStatus;
 import site.donghyeon.bank.infrastructure.common.BaseEntity;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "accounts")
+@Table(
+        name = "accounts",
+        indexes = {
+                @Index(name = "idx_user_stats", columnList = "userId, status")
+        }
+)
 @Access(AccessType.FIELD)
+@SQLDelete(sql = "UPDATE accounts SET status = 'CLOSED'::account_status WHERE id = ?")
+@SQLRestriction("status = 'OPEN'::account_status")
 public class AccountJpaEntity extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, columnDefinition = "uuid")
@@ -20,6 +31,7 @@ public class AccountJpaEntity extends BaseEntity {
     @Column(name = "balance", nullable = false)
     private Long balance = 0L;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private AccountStatus status;
