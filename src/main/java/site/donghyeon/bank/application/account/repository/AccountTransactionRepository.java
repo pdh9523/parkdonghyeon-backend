@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface AccountTransactionRepository {
     AccountTransaction save(AccountTransaction tx);
-    boolean existsById(UUID txId);
+    boolean existsByEventId(UUID eventId);
 }

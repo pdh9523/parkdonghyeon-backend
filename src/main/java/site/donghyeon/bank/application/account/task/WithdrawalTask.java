@@ -6,14 +6,14 @@ import site.donghyeon.bank.infrastructure.messaging.rabbitmq.withdraw.Withdrawal
 import java.util.UUID;
 
 public record WithdrawalTask(
-        UUID txId,
-        UUID fromAccountId,
+        UUID eventId,
+        UUID accountId,
         Money amount
 ) {
     public static WithdrawalTask from(WithdrawalMessage msg) {
         return new WithdrawalTask(
-                msg.txId(),
-                msg.fromAccountId(),
+                msg.eventId(),
+                msg.accountId(),
                 new Money(msg.amount())
         );
     }

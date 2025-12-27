@@ -9,8 +9,8 @@ public final class AccountTransactionMapper {
     public static AccountTransaction toDomain(AccountTransactionJpaEntity entity) {
         return new AccountTransaction(
                 entity.getId(),
-                entity.getFromAccountId(),
-                entity.getToAccountId(),
+                entity.getAccountId(),
+                entity.getEventId(),
                 new Money(entity.getAmount()),
                 entity.getTransactionType()
         );
@@ -19,8 +19,8 @@ public final class AccountTransactionMapper {
     public static AccountTransactionJpaEntity toEntity(AccountTransaction tx) {
         return new AccountTransactionJpaEntity(
                 tx.getTxId(),
-                tx.getFromAccountId(),
-                tx.getToAccountId(),
+                tx.getAccountId(),
+                tx.getEventId(),
                 tx.getAmount().amount(),
                 tx.getTransactionType()
         );

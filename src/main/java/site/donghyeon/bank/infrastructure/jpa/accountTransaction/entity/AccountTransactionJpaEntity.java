@@ -6,19 +6,18 @@ import site.donghyeon.bank.infrastructure.common.BaseEntity;
 
 import java.util.UUID;
 
-//TODO: partial index 필요
 @Entity
 @Table(name = "account_transactions")
 public class AccountTransactionJpaEntity extends BaseEntity {
     @Id
-    @Column(name = "id", nullable = false, columnDefinition="uuid")
+    @Column(name = "id", nullable = false, columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "from_account_id", columnDefinition="uuid")
-    private UUID fromAccountId;
+    @Column(name = "account_id", columnDefinition = "uuid")
+    private UUID accountId;
 
-    @Column(name = "to_account_id", columnDefinition="uuid")
-    private UUID toAccountId;
+    @Column(name = "event_id", columnDefinition = "uuid")
+    private UUID eventId;
 
     @Column(name = "amount", nullable = false)
     private long amount;
@@ -29,12 +28,12 @@ public class AccountTransactionJpaEntity extends BaseEntity {
 
 
     public AccountTransactionJpaEntity(
-            UUID id, UUID fromAccountId, UUID toAccountId,
-            long amount, TransactionType transactionType
+            UUID id, UUID accountId, UUID eventId, long amount,
+            TransactionType transactionType
     ) {
         this.id = id;
-        this.fromAccountId = fromAccountId;
-        this.toAccountId = toAccountId;
+        this.accountId = accountId;
+        this.eventId = eventId;
         this.amount = amount;
         this.transactionType = transactionType;
     }
@@ -45,12 +44,12 @@ public class AccountTransactionJpaEntity extends BaseEntity {
         return this.id;
     }
 
-    public UUID getFromAccountId() {
-        return this.fromAccountId;
+    public UUID getAccountId() {
+        return this.accountId;
     }
 
-    public UUID getToAccountId() {
-        return this.toAccountId;
+    public UUID getEventId() {
+        return this.eventId;
     }
 
     public TransactionType getTransactionType() {

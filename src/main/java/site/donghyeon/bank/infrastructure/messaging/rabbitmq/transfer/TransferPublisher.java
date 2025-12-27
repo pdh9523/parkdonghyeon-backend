@@ -16,7 +16,7 @@ public class TransferPublisher {
     public void publish(TransferTask task) {
         TransferMessage message =
                 new TransferMessage(
-                        task.txId(),
+                        task.eventId(),
                         task.fromAccountId(),
                         task.toAccountId(),
                         task.amount().amount()

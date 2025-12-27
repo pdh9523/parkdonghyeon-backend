@@ -6,14 +6,14 @@ import site.donghyeon.bank.infrastructure.messaging.rabbitmq.transfer.TransferMe
 import java.util.UUID;
 
 public record TransferTask(
-        UUID txId,
+        UUID eventId,
         UUID fromAccountId,
         UUID toAccountId,
         Money amount
 ) {
     public static TransferTask from(TransferMessage msg) {
         return new TransferTask(
-                msg.txId(),
+                msg.eventId(),
                 msg.fromAccountId(),
                 msg.toAccountId(),
                 new Money(msg.amount())

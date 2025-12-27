@@ -16,8 +16,8 @@ public class WithdrawalPublisher {
     public void publish(WithdrawalTask task) {
         WithdrawalMessage message =
                 new WithdrawalMessage(
-                        task.txId(),
-                        task.fromAccountId(),
+                        task.eventId(),
+                        task.accountId(),
                         task.amount().amount()
                 );
 
@@ -25,7 +25,7 @@ public class WithdrawalPublisher {
                 WithdrawalRabbitMQConfig.WITHDRAWAL_EXCHANGE,
                 "%s.%s".formatted(
                         WithdrawalRabbitMQConfig.WITHDRAWAL_ROUTING_KEY,
-                        task.fromAccountId()
+                        task.accountId()
                 ),
                 message
         );

@@ -29,7 +29,7 @@ public class TransferExecutor {
     public void execute(TransferTask task) {
         System.out.println(11);
         // 1. 멱등성 처리
-        if (accountTransactionRepository.existsById(task.txId())) return;
+        if (accountTransactionRepository.existsByEventId(task.eventId())) return;
 
         // 2. 계좌 확인 ( from -> to )
         Account fromAccount = accountRepository.findById(task.fromAccountId())
@@ -38,11 +38,22 @@ public class TransferExecutor {
         Account toAccount = accountRepository.findById(task.toAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(task.toAccountId()));
 
-        AccountTransaction tx = AccountTransaction.transfer(
-                task.txId(),
+        AccountTransaction txFrom = AccountTransaction.transferFrom(
+                task.eventId(),
                 task.fromAccountId(),
+                task.amount()
+        );
+
+        AccountTransaction txTo = AccountTransaction.transferTo(
+                task.eventId(),
                 task.toAccountId(),
                 task.amount()
+        );
+
+        AccountTransaction txFee = AccountTransaction.fee(
+                task.eventId(),
+                task.fromAccountId(),
+                task.amount().getFee()
         );
 
         try {
@@ -50,20 +61,21 @@ public class TransferExecutor {
             fromAccount.withdraw(task.amount().withFee());
             // 4. to 계좌에서 입금
             toAccount.deposit(task.amount());
-            // 5. 수수료 거래내역 생성
-            AccountTransaction feeTx = AccountTransaction.fee(tx);
 
             // 6. 이체 내역 저장
             accountRepository.save(fromAccount);
             accountRepository.save(toAccount);
-            accountTransactionRepository.save(feeTx);
-            accountTransactionRepository.save(tx);
+
+            accountTransactionRepository.save(txFrom);
+            accountTransactionRepository.save(txTo);
+            accountTransactionRepository.save(txFee);
+
             // 7. 이체 한도 수정
             transferLimitCache.increase(task.fromAccountId(), task.amount());
         } catch (InsufficientBalanceException e) {
-            // 3-1 출금 실패 시 실패 내역 저장
-            tx.markFailed();
-            accountTransactionRepository.save(tx);
+            // 3-1 출금 실패 시 실패 내역 저장 (보내는 사람에게만)
+            txFrom.markFailed();
+            accountTransactionRepository.save(txFrom);
         }
     }
 }

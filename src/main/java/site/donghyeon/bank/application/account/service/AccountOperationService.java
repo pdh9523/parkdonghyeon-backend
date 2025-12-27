@@ -100,7 +100,7 @@ public class AccountOperationService implements AccountOperationUseCase {
         );
         withdrawalPublisher.publish(task);
 
-        return new WithdrawalResult(task.txId());
+        return new WithdrawalResult(task.eventId());
     }
 
     @Override
@@ -119,7 +119,7 @@ public class AccountOperationService implements AccountOperationUseCase {
         Account account = accountRepository.findById(command.fromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(command.fromAccountId()));
 
-        if (transferAmount.exceeded(account.getBalance().withFee())) {
+        if (transferAmount.withFee().exceeded(account.getBalance())) {
             throw new InsufficientBalanceException(account.getBalance(), transferAmount);
         }
 
@@ -132,6 +132,6 @@ public class AccountOperationService implements AccountOperationUseCase {
         );
         transferPublisher.publish(task);
 
-        return new TransferResult(task.txId());
+        return new TransferResult(task.eventId());
     }
 }

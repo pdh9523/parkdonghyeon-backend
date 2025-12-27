@@ -8,11 +8,11 @@ import java.util.UUID;
 @Schema(description = "계좌 입금 응답")
 public record DepositResponse(
         @Schema(description = "거래 내역 ID", example = "00000000-0000-0000-0000-000000000000")
-        UUID requestId
+        UUID eventId
 ) {
     public static DepositResponse from(DepositResult result) {
         return new DepositResponse(
-                result.txId()
+                result.eventId()
         );
     }
 }

@@ -7,55 +7,78 @@ import java.util.UUID;
 
 public class AccountTransaction {
     UUID txId;
-    UUID fromAccountId;
-    UUID toAccountId;
+    UUID eventId;
+    UUID accountId;
     Money amount;
     TransactionType transactionType;
 
-    public AccountTransaction(UUID txId, UUID fromAccountId, UUID toAccountId, Money amount, TransactionType transactionType) {
+    public AccountTransaction(
+            UUID txId, UUID eventId, UUID accountId,
+            Money amount, TransactionType transactionType
+    ) {
         this.txId = txId;
-        this.fromAccountId = fromAccountId;
-        this.toAccountId = toAccountId;
+        this.eventId = eventId;
+        this.accountId = accountId;
         this.amount = amount;
         this.transactionType = transactionType;
     }
 
-    public static AccountTransaction deposit(UUID txId, UUID toAccountId, Money amount) {
+    public static AccountTransaction deposit(
+            UUID eventId, UUID accountId, Money amount
+    ) {
         return new AccountTransaction(
-                txId,
-                null,
-                toAccountId,
+                UUID.randomUUID(),
+                eventId,
+                accountId,
                 amount,
                 TransactionType.DEPOSIT
         );
     }
 
-    public static AccountTransaction withdrawal(UUID txId, UUID fromAccountId, Money amount) {
+    public static AccountTransaction withdrawal(
+            UUID eventId, UUID accountId, Money amount
+    ) {
         return new AccountTransaction(
-                txId,
-                fromAccountId,
-                null,
-                amount,
+                UUID.randomUUID(),
+                eventId,
+                accountId,
+                amount.toMinus(),
                 TransactionType.WITHDRAW
         );
     }
 
-    public static AccountTransaction transfer(UUID txId, UUID fromAccountId, UUID toAccountID, Money amount) {
+    public static AccountTransaction transferFrom(
+            UUID eventId, UUID accountId, Money amount
+    ) {
         return new AccountTransaction(
-                txId,
-                fromAccountId,
-                toAccountID,
+                UUID.randomUUID(),
+                eventId,
+                accountId,
+                amount.toMinus(),
+                TransactionType.TRANSFER
+        );
+    }
+
+    public static AccountTransaction transferTo(
+            UUID eventId, UUID accountId, Money amount
+    ) {
+        return new AccountTransaction(
+                UUID.randomUUID(),
+                eventId,
+                accountId,
                 amount,
                 TransactionType.TRANSFER
         );
     }
 
-    public static AccountTransaction fee(AccountTransaction tx) {
+    public static AccountTransaction fee(
+            UUID eventId, UUID accountId, Money amount
+    ) {
         return new AccountTransaction(
-                tx.getTxId(),
-                tx.getFromAccountId(),
-                null,
-                tx.getAmount().getFee(),
+                UUID.randomUUID(),
+                eventId,
+                accountId,
+                amount.toMinus(),
                 TransactionType.FEE
         );
     }
@@ -64,11 +87,12 @@ public class AccountTransaction {
         return this.txId;
     }
 
-    public UUID getFromAccountId() {
-        return this.fromAccountId;
+    public UUID getAccountId() {
+        return this.accountId;
     }
-    public UUID getToAccountId() {
-        return this.toAccountId;
+
+    public UUID getEventId() {
+        return this.eventId;
     }
 
     public Money getAmount() {

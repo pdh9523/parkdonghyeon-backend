@@ -6,14 +6,14 @@ import site.donghyeon.bank.infrastructure.messaging.rabbitmq.deposit.DepositMess
 import java.util.UUID;
 
 public record DepositTask(
-        UUID txId,
-        UUID toAccountId,
+        UUID eventId,
+        UUID accountId,
         Money amount
 ) {
     public static DepositTask from(DepositMessage msg) {
         return new DepositTask(
-                msg.txId(),
-                msg.toAccountId(),
+                msg.eventId(),
+                msg.accountId(),
                 new Money(msg.amount())
         );
     }

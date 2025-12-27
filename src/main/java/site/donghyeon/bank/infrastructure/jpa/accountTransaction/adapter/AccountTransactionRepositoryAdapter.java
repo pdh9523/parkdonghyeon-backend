@@ -27,7 +27,7 @@ public class AccountTransactionRepositoryAdapter implements AccountTransactionRe
     }
 
     @Override
-    public boolean existsById(UUID txId) {
-        return accountTransactionJpaRepository.existsById(txId);
+    public boolean existsByEventId(UUID eventId) {
+        return accountTransactionJpaRepository.existsByEventId(eventId);
     }
 }

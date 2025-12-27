@@ -26,15 +26,15 @@ public class DepositExecutor {
 
     public void execute(DepositTask task) {
         // 1. 멱등성 처리
-        if (accountTransactionRepository.existsById(task.txId())) return;
+        if (accountTransactionRepository.existsByEventId(task.eventId())) return;
 
         // 2. 입금
-        Account account = accountRepository.findById(task.toAccountId())
-                .orElseThrow(() -> new AccountNotFoundException(task.toAccountId()));
+        Account account = accountRepository.findById(task.accountId())
+                .orElseThrow(() -> new AccountNotFoundException(task.accountId()));
         account.deposit(task.amount());
 
         // 3. 거래 내역 생성
-        AccountTransaction tx = AccountTransaction.deposit(task.txId(), task.toAccountId(), task.amount());
+        AccountTransaction tx = AccountTransaction.deposit(task.eventId(), task.accountId(), task.amount());
 
         // 4. DB 저장
         accountRepository.save(account);

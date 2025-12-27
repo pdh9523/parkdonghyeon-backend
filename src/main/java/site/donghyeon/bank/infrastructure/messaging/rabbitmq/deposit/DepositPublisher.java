@@ -16,8 +16,8 @@ public class DepositPublisher {
     public void publish(DepositTask task) {
         DepositMessage message =
                 new DepositMessage(
-                        task.txId(),
-                        task.toAccountId(),
+                        task.eventId(),
+                        task.accountId(),
                         task.amount().amount()
                 );
 
@@ -25,7 +25,7 @@ public class DepositPublisher {
                 DepositRabbitMQConfig.DEPOSIT_EXCHANGE,
                 "%s.%s".formatted(
                         DepositRabbitMQConfig.DEPOSIT_ROUTING_KEY,
-                        task.toAccountId()
+                        task.accountId()
                 ),
                 message
         );

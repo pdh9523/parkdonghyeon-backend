@@ -30,12 +30,17 @@ public class WithdrawalExecutor {
 
     public void execute(WithdrawalTask task) {
         // 1. 멱등성 처리
-        if (accountTransactionRepository.existsById(task.txId())) return;
+        if (accountTransactionRepository.existsByEventId(task.eventId())) return;
 
         // 2. 계좌 확인
-        Account account = accountRepository.findById(task.fromAccountId())
-                .orElseThrow(() -> new AccountNotFoundException(task.fromAccountId()));
-        AccountTransaction tx = AccountTransaction.withdrawal(task.txId(), task.fromAccountId(), task.amount());
+        Account account = accountRepository.findById(task.accountId())
+                .orElseThrow(() -> new AccountNotFoundException(task.accountId()));
+
+        AccountTransaction tx = AccountTransaction.withdrawal(
+                task.eventId(),
+                task.accountId(),
+                task.amount()
+        );
 
         try {
             // 3. 출금 시도
@@ -44,7 +49,7 @@ public class WithdrawalExecutor {
             accountRepository.save(account);
             accountTransactionRepository.save(tx);
             // 5. 출금 한도 수정
-            withdrawalLimitCache.increase(task.fromAccountId(), task.amount());
+            withdrawalLimitCache.increase(task.accountId(), task.amount());
         } catch (InsufficientBalanceException e) {
             // 3-1. 출금 시도 실패 시 실패 내역 저장
             tx.markFailed();
