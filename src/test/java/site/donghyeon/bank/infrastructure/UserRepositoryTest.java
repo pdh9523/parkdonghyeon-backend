@@ -1,8 +1,8 @@
 package site.donghyeon.bank.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import site.donghyeon.bank.domain.user.User;
 import site.donghyeon.bank.infrastructure.jpa.user.adapter.UserRepositoryAdapter;
-import site.donghyeon.bank.infrastructure.jpa.user.exception.UserNotFoundException;
 
 @DataJpaTest
 @Import(UserRepositoryAdapter.class)
@@ -25,12 +24,15 @@ class UserRepositoryTest {
 
     @Test
     void 저장_후_조회_테스트() {
-        User saved = userRepositoryAdapter.save(new User(TEST_USER_ID, TEST_EMAIL));
+        userRepositoryAdapter.save(new User(TEST_USER_ID, TEST_EMAIL));
 
-        User found = userRepositoryAdapter.findById(saved.getUserId());
+        Optional<User> found = userRepositoryAdapter.findById(TEST_USER_ID);
 
-        assertThat(found.getUserId()).isEqualTo(TEST_USER_ID);
-        assertThat(found.getEmail()).isEqualTo(TEST_EMAIL);
+        assertThat(found).isPresent();
+
+        User user = found.get();
+        assertThat(user.getUserId()).isEqualTo(TEST_USER_ID);
+        assertThat(user.getEmail()).isEqualTo(TEST_EMAIL);
     }
 
     @Test
@@ -44,7 +46,7 @@ class UserRepositoryTest {
 
     @Test
     void 조회_불가_시_에러_반환() {
-        assertThatThrownBy(() -> userRepositoryAdapter.findById(TEST_USER_ID))
-                .isInstanceOf(UserNotFoundException.class);
+        Optional<User> found = userRepositoryAdapter.findById(TEST_USER_ID);
+        assertThat(found).isNotPresent();
     }
 }
