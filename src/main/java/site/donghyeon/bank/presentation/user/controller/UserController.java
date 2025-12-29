@@ -24,8 +24,10 @@ public class UserController {
     @GetMapping()
     @Operation(
             summary = "회원 조회",
-            description = "<p>회원의 정보를 조회합니다.</p>" +
-                    "<p>TODO: keycloak 도입 시 인증을 통해 파라미터를 받도록 수정합니다.</p>"
+            description = "<p> 회원의 정보를 조회합니다. </p>" +
+                    "<div> keycloak에서 회원가입을 진행하며, </div>" +
+                    "<div> keycloak에서 로그인 후 받은 토큰을 통해 유저를 식별합니다. </div>" +
+                    "<div> 회원 가입 후 한 번 실행해야 합니다. </div>"
     )
     public ResponseEntity<GetUserInfoResponse> getUserInfo(
             @GetClaims CurrentUser currentUser
