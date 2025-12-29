@@ -35,6 +35,22 @@ public class AccountController {
         this.accountTransactionUseCase = accountTransactionUseCase;
     }
 
+    @GetMapping()
+    @Operation(
+            summary = "계좌 조회",
+            description = "<p>내가 가진 모든 계좌를 조회합니다.</p>"
+    )
+    public ResponseEntity<MyAccountsResponse> getMyAccounts(
+            @Parameter(hidden = true)
+            @GetClaims CurrentUser currentUser
+    ) {
+        return ResponseEntity.ok(
+                MyAccountsResponse.from(
+                    accountUseCase.getMyAccounts(MyAccountsRequest.from(currentUser.userId()).toQuery())
+                )
+        );
+    }
+
     @PostMapping()
     @Operation(
             summary = "계좌 개설",

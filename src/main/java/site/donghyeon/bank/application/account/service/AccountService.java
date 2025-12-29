@@ -7,11 +7,12 @@ import site.donghyeon.bank.application.account.command.CloseAccountCommand;
 import site.donghyeon.bank.application.account.command.OpenAccountCommand;
 import site.donghyeon.bank.application.account.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.exception.RemainingBalanceException;
+import site.donghyeon.bank.application.account.query.MyAccountsQuery;
+import site.donghyeon.bank.application.account.result.MyAccountsResult;
 import site.donghyeon.bank.application.account.result.OpenAccountResult;
 import site.donghyeon.bank.common.domain.Money;
 import site.donghyeon.bank.domain.account.Account;
 import site.donghyeon.bank.application.account.repository.AccountRepository;
-import site.donghyeon.bank.domain.account.exception.AccountAccessDeniedException;
 
 import java.util.UUID;
 
@@ -24,6 +25,11 @@ public class AccountService implements AccountUseCase {
             AccountRepository accountRepository
     ) {
         this.accountRepository = accountRepository;
+    }
+
+    @Override
+    public MyAccountsResult getMyAccounts(MyAccountsQuery query) {
+        return MyAccountsResult.from(accountRepository.findAllByUserId(query.userId()));
     }
 
     @Override

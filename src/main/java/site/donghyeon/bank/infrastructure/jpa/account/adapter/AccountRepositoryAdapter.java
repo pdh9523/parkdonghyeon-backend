@@ -1,11 +1,13 @@
 package site.donghyeon.bank.infrastructure.jpa.account.adapter;
 
 import org.springframework.stereotype.Repository;
+import site.donghyeon.bank.application.account.view.AccountView;
 import site.donghyeon.bank.domain.account.Account;
 import site.donghyeon.bank.application.account.repository.AccountRepository;
 import site.donghyeon.bank.infrastructure.jpa.account.entity.AccountJpaEntity;
 import site.donghyeon.bank.infrastructure.jpa.account.mapper.AccountMapper;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +24,13 @@ public class AccountRepositoryAdapter implements AccountRepository {
     public Optional<Account> findById(UUID accountId) {
         return accountJpaRepository.findById(accountId)
                 .map(AccountMapper::toDomain);
+    }
+
+    @Override
+    public List<AccountView> findAllByUserId(UUID userId) {
+        return accountJpaRepository.findAllByUserId(userId).stream()
+                .map(AccountMapper::toAccountView)
+                .toList();
     }
 
     @Override
