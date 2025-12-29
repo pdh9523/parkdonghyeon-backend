@@ -2,12 +2,11 @@ package site.donghyeon.bank.application.account.operation.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.operation.AccountOperationUseCase;
 import site.donghyeon.bank.application.account.operation.command.DepositCommand;
 import site.donghyeon.bank.application.account.operation.command.TransferCommand;
 import site.donghyeon.bank.application.account.operation.command.WithdrawalCommand;
-import site.donghyeon.bank.application.account.support.cache.TransferLimitCache;
-import site.donghyeon.bank.application.account.support.cache.WithdrawalLimitCache;
 import site.donghyeon.bank.application.account.support.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.support.exception.TransferLimitExceededException;
 import site.donghyeon.bank.application.account.support.exception.WithdrawalLimitExceededException;
@@ -34,22 +33,19 @@ public class AccountOperationService implements AccountOperationUseCase {
     public final static Money TRANSFER_LIMIT = new Money(3_000_000);
 
     private final AccountRepository accountRepository;
-    private final WithdrawalLimitCache withdrawalLimitCache;
-    private final TransferLimitCache transferLimitCache;
+    private final AccountLimitReader accountLimitReader;
     private final DepositPublisher depositPublisher;
     private final WithdrawalPublisher withdrawalPublisher;
     private final TransferPublisher transferPublisher;
 
     public AccountOperationService(
             AccountRepository accountRepository,
-            WithdrawalLimitCache withdrawalLimitCache,
-            TransferLimitCache transferLimitCache,
+            AccountLimitReader accountLimitReader,
             DepositPublisher depositPublisher,
             WithdrawalPublisher withdrawalPublisher,
             TransferPublisher transferPublisher) {
         this.accountRepository = accountRepository;
-        this.withdrawalLimitCache = withdrawalLimitCache;
-        this.transferLimitCache = transferLimitCache;
+        this.accountLimitReader = accountLimitReader;
         this.depositPublisher = depositPublisher;
         this.withdrawalPublisher = withdrawalPublisher;
         this.transferPublisher = transferPublisher;
@@ -88,7 +84,7 @@ public class AccountOperationService implements AccountOperationUseCase {
         }
 
         // 3. 한도 조회
-        Money spentLimit = withdrawalLimitCache.checkLimit(command.fromAccountId());
+        Money spentLimit = accountLimitReader.checkWithdrawalLimit(command.fromAccountId());
         Money expectedLimit = spentLimit.add(withdrawalAmount);
 
         if (expectedLimit.exceeded(WITHDRAWAL_LIMIT)) {
@@ -122,7 +118,7 @@ public class AccountOperationService implements AccountOperationUseCase {
         }
 
         // 3. 한도 조회
-        Money spentLimit = transferLimitCache.checkTransferLimit(command.fromAccountId());
+        Money spentLimit = accountLimitReader.checkTransferLimit(command.fromAccountId());
         Money expectedLimit = spentLimit.add(transferAmount);
 
         if (expectedLimit.exceeded(TRANSFER_LIMIT)) {

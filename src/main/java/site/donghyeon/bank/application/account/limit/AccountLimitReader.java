@@ -6,5 +6,11 @@ import site.donghyeon.bank.domain.accountTransaction.enums.LimitType;
 import java.util.UUID;
 
 public interface AccountLimitReader {
-    Money read(UUID accountId, LimitType type);
+    Money checkTransferLimit(UUID accountId);
+    Money checkWithdrawalLimit(UUID accountId);
+    Money checkLimit(UUID accountId, LimitType type);
+    boolean tryConsumeTransfer(UUID accountId, Money amount, Money limit);
+    boolean tryConsumeWithdrawal(UUID accountId, Money amount, Money limit);
+    void rollbackTransferLimit(UUID accountId, Money amount);
+    void rollbackWithdrawalLimit(UUID accountId, Money amount);
 }

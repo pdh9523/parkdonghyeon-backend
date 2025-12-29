@@ -1,9 +1,8 @@
 package site.donghyeon.bank.application.account.transaction.service;
 
 import org.springframework.stereotype.Service;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.transaction.AccountTransactionUseCase;
-import site.donghyeon.bank.application.account.support.cache.TransferLimitCache;
-import site.donghyeon.bank.application.account.support.cache.WithdrawalLimitCache;
 import site.donghyeon.bank.application.account.transaction.query.AccountLimitQuery;
 import site.donghyeon.bank.application.account.transaction.query.TransactionsQuery;
 import site.donghyeon.bank.application.account.support.repository.AccountRepository;
@@ -19,19 +18,16 @@ public class AccountTransactionService implements AccountTransactionUseCase {
 
     private final AccountRepository accountRepository;
     private final AccountTransactionRepository accountTransactionRepository;
-    private final WithdrawalLimitCache withdrawalLimitCache;
-    private final TransferLimitCache transferLimitCache;
+    private final AccountLimitReader accountLimitReader;
 
     public AccountTransactionService(
             AccountRepository accountRepository,
             AccountTransactionRepository accountTransactionRepository,
-            WithdrawalLimitCache withdrawalLimitCache,
-            TransferLimitCache transferLimitCache
+            AccountLimitReader accountLimitReader
     ) {
         this.accountRepository = accountRepository;
         this.accountTransactionRepository = accountTransactionRepository;
-        this.withdrawalLimitCache = withdrawalLimitCache;
-        this.transferLimitCache = transferLimitCache;
+        this.accountLimitReader = accountLimitReader;
     }
 
     @Override
@@ -48,13 +44,8 @@ public class AccountTransactionService implements AccountTransactionUseCase {
             throw new AccountAccessDeniedException();
         }
 
-        Money limit = Money.zero();
-        if (query.type() == LimitType.WITHDRAWAL) {
-            limit = withdrawalLimitCache.checkWithdrawalLimit(query.accountId());
-        } else if (query.type() == LimitType.TRANSFER) {
-            limit = transferLimitCache.checkTransferLimit(query.accountId());
-        }
-
-        return AccountLimitResult.of(limit);
+        return AccountLimitResult.of(
+                accountLimitReader.checkLimit(query.accountId(), query.type())
+        );
     }
 }

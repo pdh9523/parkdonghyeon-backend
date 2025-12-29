@@ -2,7 +2,7 @@ package site.donghyeon.bank.application.account.operation.executor;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import site.donghyeon.bank.application.account.support.cache.WithdrawalLimitCache;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.support.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.support.repository.AccountRepository;
 import site.donghyeon.bank.application.account.support.repository.AccountTransactionRepository;
@@ -19,15 +19,16 @@ public class WithdrawalExecutor {
 
     private final AccountRepository accountRepository;
     private final AccountTransactionRepository accountTransactionRepository;
-    private final WithdrawalLimitCache withdrawalLimitCache;
+    private final AccountLimitReader accountLimitReader;
 
     public WithdrawalExecutor(
             AccountRepository accountRepository,
             AccountTransactionRepository accountTransactionRepository,
-            WithdrawalLimitCache withdrawalLimitCache) {
+            AccountLimitReader accountLimitReader
+    ) {
         this.accountRepository = accountRepository;
         this.accountTransactionRepository = accountTransactionRepository;
-        this.withdrawalLimitCache = withdrawalLimitCache;
+        this.accountLimitReader = accountLimitReader;
     }
 
     public void execute(WithdrawalTask task) {
@@ -45,7 +46,7 @@ public class WithdrawalExecutor {
                 account.getBalance()
         );
 
-        if (!withdrawalLimitCache.tryConsume(task.accountId(), task.amount(), WITHDRAWAL_LIMIT)) {
+        if (!accountLimitReader.tryConsumeWithdrawal(task.accountId(), task.amount(), WITHDRAWAL_LIMIT)) {
             //TODO: 한도 초과로 인한 실패 별도 구분자로 표시
             tx.markFailed();
         } else {
@@ -63,7 +64,7 @@ public class WithdrawalExecutor {
             } catch (InsufficientBalanceException e) {
                 // 3-1. 출금 시도 실패 시 실패 내역 저장
                 tx.markFailed();
-                withdrawalLimitCache.rollback(task.accountId(), task.amount());
+                accountLimitReader.rollbackWithdrawalLimit(task.accountId(), task.amount());
             }
         }
         accountTransactionRepository.save(tx);

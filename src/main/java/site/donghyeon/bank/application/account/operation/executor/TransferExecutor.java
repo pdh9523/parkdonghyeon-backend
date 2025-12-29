@@ -1,7 +1,7 @@
 package site.donghyeon.bank.application.account.operation.executor;
 
 import org.springframework.stereotype.Component;
-import site.donghyeon.bank.application.account.support.cache.TransferLimitCache;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.support.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.support.repository.AccountRepository;
 import site.donghyeon.bank.application.account.support.repository.AccountTransactionRepository;
@@ -17,15 +17,16 @@ public class TransferExecutor {
 
     private final AccountRepository accountRepository;
     private final AccountTransactionRepository accountTransactionRepository;
-    private final TransferLimitCache transferLimitCache;
+    private final AccountLimitReader accountLimitReader;
 
     public TransferExecutor(
             AccountRepository accountRepository,
             AccountTransactionRepository accountTransactionRepository,
-            TransferLimitCache transferLimitCache) {
+            AccountLimitReader accountLimitReader
+    ) {
         this.accountRepository = accountRepository;
         this.accountTransactionRepository = accountTransactionRepository;
-        this.transferLimitCache = transferLimitCache;
+        this.accountLimitReader = accountLimitReader;
     }
 
     public void execute(TransferTask task) {
@@ -43,7 +44,7 @@ public class TransferExecutor {
                 fromAccount.getBalance()
         );
 
-        if (!transferLimitCache.tryConsume(task.fromAccountId(), task.amount(), TRANSFER_LIMIT)) {
+        if (!accountLimitReader.tryConsumeTransfer(task.fromAccountId(), task.amount(), TRANSFER_LIMIT)) {
             txFrom.markFailed();
             accountTransactionRepository.save(txFrom);
         } else {
@@ -89,12 +90,12 @@ public class TransferExecutor {
             } catch (InsufficientBalanceException e) {
                 // 3-1 출금 실패 시 실패 내역 저장 (보내는 사람에게만)
                 txFrom.markFailed();
-                transferLimitCache.rollback(task.fromAccountId(), task.amount());
+                accountLimitReader.rollbackTransferLimit(task.fromAccountId(), task.amount());
                 accountTransactionRepository.save(txFrom);
             } catch (AccountNotFoundException e) {
                 // 2-2. 받는 사람 계좌 없을 시 실패 처리
                 txFrom.markFailed();
-                transferLimitCache.rollback(task.fromAccountId(), task.amount());
+                accountLimitReader.rollbackTransferLimit(task.fromAccountId(), task.amount());
                 accountTransactionRepository.save(txFrom);
             }
         }

@@ -5,8 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import site.donghyeon.bank.application.account.support.cache.TransferLimitCache;
-import site.donghyeon.bank.application.account.support.cache.WithdrawalLimitCache;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.operation.command.DepositCommand;
 import site.donghyeon.bank.application.account.operation.command.TransferCommand;
 import site.donghyeon.bank.application.account.operation.command.WithdrawalCommand;
@@ -62,10 +61,7 @@ public class AccountOperationUseCaseTest {
     AccountRepository accountRepository;
 
     @Mock
-    WithdrawalLimitCache withdrawalLimitCache;
-
-    @Mock
-    TransferLimitCache transferLimitCache;
+    AccountLimitReader accountLimitReader;
 
     @InjectMocks
     AccountOperationService accountOperationService;
@@ -85,7 +81,7 @@ public class AccountOperationUseCaseTest {
         WithdrawalCommand command = new WithdrawalCommand(TEST_USER_ID, TEST_ACCOUNT_ID, 10_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(withdrawalLimitCache.checkWithdrawalLimit(TEST_ACCOUNT_ID))
+        given(accountLimitReader.checkWithdrawalLimit(TEST_ACCOUNT_ID))
                 .willReturn(Money.zero());
 
         accountOperationService.withdrawal(command);
@@ -99,7 +95,7 @@ public class AccountOperationUseCaseTest {
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(accountRepository.existsById(OTHER_ACCOUNT_ID)).willReturn(true);
-        given(transferLimitCache.checkTransferLimit(TEST_ACCOUNT_ID))
+        given(accountLimitReader.checkTransferLimit(TEST_ACCOUNT_ID))
                 .willReturn(Money.zero());
 
         accountOperationService.transfer(command);
@@ -112,7 +108,7 @@ public class AccountOperationUseCaseTest {
         WithdrawalCommand command = new WithdrawalCommand(TEST_USER_ID, TEST_ACCOUNT_ID, 5_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(withdrawalLimitCache.checkWithdrawalLimit(TEST_ACCOUNT_ID))
+        given(accountLimitReader.checkWithdrawalLimit(TEST_ACCOUNT_ID))
                 .willReturn(new Money(1_000_000));
 
         assertThatThrownBy(() -> accountOperationService.withdrawal(command))
@@ -127,7 +123,7 @@ public class AccountOperationUseCaseTest {
         TransferCommand command = new TransferCommand(TEST_USER_ID, TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 5_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(transferLimitCache.checkTransferLimit(TEST_ACCOUNT_ID))
+        given(accountLimitReader.checkTransferLimit(TEST_ACCOUNT_ID))
                 .willReturn(new Money(3_000_000));
 
         assertThatThrownBy(() -> accountOperationService.transfer(command))

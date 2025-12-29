@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import site.donghyeon.bank.application.account.support.cache.TransferLimitCache;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.support.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.operation.executor.TransferExecutor;
 import site.donghyeon.bank.application.account.support.repository.AccountRepository;
@@ -70,7 +70,7 @@ public class TransferExecutorTest {
     AccountTransactionRepository accountTransactionRepository;
 
     @Mock
-    TransferLimitCache transferLimitCache;
+    AccountLimitReader accountLimitReader;
 
     @InjectMocks
     TransferExecutor transferExecutor;
@@ -80,7 +80,7 @@ public class TransferExecutorTest {
         given(accountTransactionRepository.existsByEventId(TEST_EVENT_ID)).willReturn(false);
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(accountRepository.findById(OTHER_ACCOUNT_ID)).willReturn(Optional.of(OTHER_ACCOUNT));
-        given(transferLimitCache.tryConsume(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
+        given(accountLimitReader.tryConsumeTransfer(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
 
         transferExecutor.execute(TEST_TASK);
 
@@ -113,7 +113,7 @@ public class TransferExecutorTest {
         given(accountTransactionRepository.existsByEventId(TEST_EVENT_ID)).willReturn(false);
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
 
-        given(transferLimitCache.tryConsume(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
+        given(accountLimitReader.tryConsumeTransfer(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
         given(accountRepository.findById(OTHER_ACCOUNT_ID)).willReturn(Optional.empty());
 
         transferExecutor.execute(TEST_TASK);
@@ -126,7 +126,7 @@ public class TransferExecutorTest {
         given(accountTransactionRepository.existsByEventId(TEST_EVENT_ID)).willReturn(false);
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT_WITH_ZERO));
         given(accountRepository.findById(OTHER_ACCOUNT_ID)).willReturn(Optional.of(OTHER_ACCOUNT));
-        given(transferLimitCache.tryConsume(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
+        given(accountLimitReader.tryConsumeTransfer(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
 
         transferExecutor.execute(TEST_TASK);
 
@@ -138,7 +138,7 @@ public class TransferExecutorTest {
     void 이체_한도_초과_시_예외_발생() {
         given(accountTransactionRepository.existsByEventId(TEST_EVENT_ID)).willReturn(false);
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT_WITH_ZERO));
-        given(transferLimitCache.tryConsume(any(UUID.class), any(Money.class), any(Money.class))).willReturn(false);
+        given(accountLimitReader.tryConsumeTransfer(any(UUID.class), any(Money.class), any(Money.class))).willReturn(false);
 
         transferExecutor.execute(TEST_TASK);
 

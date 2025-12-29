@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import site.donghyeon.bank.application.account.support.cache.WithdrawalLimitCache;
+import site.donghyeon.bank.application.account.limit.AccountLimitReader;
 import site.donghyeon.bank.application.account.support.exception.AccountNotFoundException;
 import site.donghyeon.bank.application.account.operation.executor.WithdrawalExecutor;
 import site.donghyeon.bank.application.account.support.repository.AccountRepository;
@@ -60,7 +60,7 @@ public class WithdrawalExecutorTest {
     AccountTransactionRepository accountTransactionRepository;
 
     @Mock
-    WithdrawalLimitCache withdrawalLimitCache;
+    AccountLimitReader accountLimitReader;
 
     @InjectMocks
     WithdrawalExecutor withdrawalExecutor;
@@ -69,12 +69,12 @@ public class WithdrawalExecutorTest {
     void 정상_출금_처리() {
         given(accountTransactionRepository.existsByEventId(TEST_EVENT_ID)).willReturn(false);
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(withdrawalLimitCache.tryConsume(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
+        given(accountLimitReader.tryConsumeWithdrawal(any(UUID.class), any(Money.class), any(Money.class))).willReturn(true);
 
         withdrawalExecutor.execute(TEST_TASK);
 
         then(accountRepository).should().save(TEST_ACCOUNT);
-        then(withdrawalLimitCache).should().tryConsume(any(UUID.class), any(Money.class), any(Money.class));
+        then(accountLimitReader).should().tryConsumeWithdrawal(any(UUID.class), any(Money.class), any(Money.class));
         then(accountTransactionRepository).should().save(any(AccountTransaction.class));
     }
 
