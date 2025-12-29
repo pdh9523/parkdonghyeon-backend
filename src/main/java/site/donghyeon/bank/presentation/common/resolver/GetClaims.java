@@ -1,4 +1,4 @@
-package site.donghyeon.bank.presentation.resolver;
+package site.donghyeon.bank.presentation.common.resolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import site.donghyeon.bank.application.user.UserUseCase;
-import site.donghyeon.bank.presentation.resolver.CurrentUser;
-import site.donghyeon.bank.presentation.resolver.GetClaims;
+import site.donghyeon.bank.presentation.common.resolver.CurrentUser;
+import site.donghyeon.bank.presentation.common.resolver.GetClaims;
 import site.donghyeon.bank.presentation.user.request.GetUserInfoRequest;
 import site.donghyeon.bank.presentation.user.response.GetUserInfoResponse;
 

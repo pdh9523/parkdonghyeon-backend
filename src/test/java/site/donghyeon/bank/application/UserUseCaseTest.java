@@ -1,10 +1,7 @@
 package site.donghyeon.bank.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -16,11 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import site.donghyeon.bank.application.user.UserService;
 import site.donghyeon.bank.application.user.command.GetUserInfoCommand;
-import site.donghyeon.bank.application.user.command.RegisterCommand;
 import site.donghyeon.bank.application.user.result.GetUserInfoResult;
-import site.donghyeon.bank.application.user.result.RegisterResult;
 import site.donghyeon.bank.domain.user.User;
-import site.donghyeon.bank.application.user.exception.EmailAlreadyExistsException;
 import site.donghyeon.bank.application.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)

@@ -9,8 +9,8 @@ import site.donghyeon.bank.application.account.AccountUseCase;
 import site.donghyeon.bank.application.account.AccountOperationUseCase;
 import site.donghyeon.bank.presentation.account.request.*;
 import site.donghyeon.bank.presentation.account.response.*;
-import site.donghyeon.bank.presentation.resolver.CurrentUser;
-import site.donghyeon.bank.presentation.resolver.GetClaims;
+import site.donghyeon.bank.presentation.common.resolver.CurrentUser;
+import site.donghyeon.bank.presentation.common.resolver.GetClaims;
 
 import java.util.UUID;
 

@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import site.donghyeon.bank.config.security.resolver.GetClaimsArgumentResolver;
-import site.donghyeon.bank.presentation.test.controller.TestController;
+import site.donghyeon.bank.presentation.common.controller.test.TestController;
 
 import java.util.UUID;
 

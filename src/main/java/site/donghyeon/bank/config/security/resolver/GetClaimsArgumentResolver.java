@@ -11,8 +11,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import site.donghyeon.bank.presentation.resolver.CurrentUser;
-import site.donghyeon.bank.presentation.resolver.GetClaims;
+import site.donghyeon.bank.presentation.common.resolver.CurrentUser;
+import site.donghyeon.bank.presentation.common.resolver.GetClaims;
 
 import java.util.UUID;
 
