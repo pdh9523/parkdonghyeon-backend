@@ -86,7 +86,7 @@ public class AccountController {
     @Operation(
             summary = "계좌 입금",
             description = "<p>계좌에 금액을 입금합니다.</p>" +
-                    "<p> 입금에 성공한 경우, 거래 내역의 PK를 반환합니다. </p>" +
+                    "<p> 입금에 성공한 경우, 거래 이벤트의 PK를 반환합니다. </p>" +
                     "<p>TODO: 무통장 입금 등을 고려했을 때 잔고 표시 여부에 대한 논의</p>"
     )
     public ResponseEntity<DepositResponse> deposit(
@@ -104,7 +104,7 @@ public class AccountController {
     @Operation(
             summary = "계좌 출금",
             description = "<p>계좌에서 금액을 출금합니다.</p>" +
-                    "<p> 출금에 성공한 경우, 거래 내역의 PK를 반환합니다. </p>"
+                    "<p> 출금에 성공한 경우, 거래 이벤트의 PK를 반환합니다. </p>"
     )
     public ResponseEntity<WithdrawalResponse> withdrawal(
             @Parameter(hidden = true)
@@ -123,7 +123,7 @@ public class AccountController {
     @Operation(
             summary = "계좌 이체",
             description = "<p>내 계좌에서 상대 계좌로 금액을 이체합니다.</p>" +
-                    "<p> 이체에 성공한 경우, 거래 내역의 PK를 반환합니다. </p>"
+                    "<p> 이체에 성공한 경우, 거래 이벤트의 PK를 반환합니다. </p>"
     )
     public ResponseEntity<TransferResponse> transfer(
             @Parameter(hidden = true)
