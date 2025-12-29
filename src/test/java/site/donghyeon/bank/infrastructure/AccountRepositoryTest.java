@@ -2,6 +2,7 @@ package site.donghyeon.bank.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,8 +37,14 @@ class AccountRepositoryTest {
     private static final UUID TEST_ACCOUNT_ID =
             UUID.fromString("00000000-0000-0000-0000-000000000000");
 
+    private static final UUID OTHER_ACCOUNT_ID =
+            UUID.fromString("00000000-0000-0000-0000-000000000001");
+
     private static final UUID TEST_USER_ID =
             UUID.fromString("00000000-0000-0000-0000-000000000001");
+
+    private static final UUID OTHER_USER_ID =
+            UUID.fromString("00000000-0000-0000-0000-000000000002");
 
     @Container
     static PostgreSQLContainer<?> postgres =
@@ -113,5 +120,101 @@ class AccountRepositoryTest {
     void 조회_불가_시_에러_반환() {
         Optional<Account> found = accountRepositoryAdapter.findById(TEST_ACCOUNT_ID);
         assertThat(found).isNotPresent();
+    }
+
+    @Test
+    void 존재_여부_확인() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.existsById(TEST_ACCOUNT_ID)).isTrue();
+    }
+
+    @Test
+    void 없는_ID_확인_시_false_반환() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.existsById(OTHER_ACCOUNT_ID)).isFalse();
+    }
+
+    @Test
+    void 유저ID_계좌ID_동시_조건_존재_확인() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.existsByUserIdAndAccountId(TEST_USER_ID, TEST_ACCOUNT_ID)).isTrue();
+    }
+
+    @Test
+    void 유저ID_계좌ID_중_하나라도_다르면_false() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.existsByUserIdAndAccountId(TEST_USER_ID, OTHER_ACCOUNT_ID)).isFalse();
+    }
+
+    @Test
+    void 유저가_가진_모든_계좌_조회() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        accountRepositoryAdapter.save(
+                new Account(
+                        OTHER_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.findAllByUserId(TEST_USER_ID)).isInstanceOf(List.class);
+        assertThat(accountRepositoryAdapter.findAllByUserId(TEST_USER_ID)).hasSize(2);
+    }
+
+    @Test
+    void 계좌_없는_유저_조회_시_빈_리스트_반환() {
+        accountRepositoryAdapter.save(
+                new Account(
+                        TEST_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        accountRepositoryAdapter.save(
+                new Account(
+                        OTHER_ACCOUNT_ID,
+                        TEST_USER_ID,
+                        Money.zero(),
+                        AccountStatus.OPEN
+                )
+        );
+        assertThat(accountRepositoryAdapter.findAllByUserId(OTHER_USER_ID)).isInstanceOf(List.class);
+        assertThat(accountRepositoryAdapter.findAllByUserId(OTHER_USER_ID)).hasSize(0);
     }
 }
