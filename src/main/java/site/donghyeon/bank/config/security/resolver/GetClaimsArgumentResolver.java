@@ -38,7 +38,6 @@ public class GetClaimsArgumentResolver implements HandlerMethodArgumentResolver 
         }
 
         Jwt jwt = token.getToken();
-        System.out.println(jwt.toString());
 
         UUID userId = UUID.fromString(jwt.getSubject());
         String email = jwt.getClaimAsString("email");

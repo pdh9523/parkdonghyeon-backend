@@ -34,7 +34,6 @@ public class UserController {
             @Parameter(hidden = true)
             @GetClaims CurrentUser currentUser
             ) {
-        System.out.println(currentUser);
         return ResponseEntity.ok(
                 GetUserInfoResponse.from(
                         userUseCase.getUserInfo(
