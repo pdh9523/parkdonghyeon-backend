@@ -2,7 +2,7 @@ package site.donghyeon.bank.presentation.account.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import site.donghyeon.bank.application.account.command.CloseAccountCommand;
+import site.donghyeon.bank.application.account.management.command.CloseAccountCommand;
 
 import java.util.UUID;
 

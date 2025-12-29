@@ -1,6 +1,6 @@
 package site.donghyeon.bank.infrastructure.messaging.rabbitmq.deposit;
 
-import site.donghyeon.bank.application.account.task.DepositTask;
+import site.donghyeon.bank.application.account.operation.task.DepositTask;
 
 import java.util.UUID;
 

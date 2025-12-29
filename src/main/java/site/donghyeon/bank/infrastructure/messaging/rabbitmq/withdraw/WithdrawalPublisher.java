@@ -2,7 +2,7 @@ package site.donghyeon.bank.infrastructure.messaging.rabbitmq.withdraw;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
-import site.donghyeon.bank.application.account.task.WithdrawalTask;
+import site.donghyeon.bank.application.account.operation.task.WithdrawalTask;
 
 @Component
 public class WithdrawalPublisher {

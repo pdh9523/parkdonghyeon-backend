@@ -2,8 +2,8 @@ package site.donghyeon.bank.infrastructure.messaging.rabbitmq.withdraw;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import site.donghyeon.bank.application.account.executor.WithdrawalExecutor;
-import site.donghyeon.bank.application.account.task.WithdrawalTask;
+import site.donghyeon.bank.application.account.operation.executor.WithdrawalExecutor;
+import site.donghyeon.bank.application.account.operation.task.WithdrawalTask;
 
 @Component
 public class WithdrawalListener {

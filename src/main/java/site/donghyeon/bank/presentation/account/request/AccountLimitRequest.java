@@ -1,6 +1,6 @@
 package site.donghyeon.bank.presentation.account.request;
 
-import site.donghyeon.bank.application.account.query.AccountLimitQuery;
+import site.donghyeon.bank.application.account.transaction.query.AccountLimitQuery;
 import site.donghyeon.bank.domain.accountTransaction.enums.LimitType;
 
 import java.util.UUID;

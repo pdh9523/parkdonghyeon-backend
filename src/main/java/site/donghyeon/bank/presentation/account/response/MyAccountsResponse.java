@@ -1,8 +1,8 @@
 package site.donghyeon.bank.presentation.account.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import site.donghyeon.bank.application.account.result.MyAccountsResult;
-import site.donghyeon.bank.application.account.view.AccountView;
+import site.donghyeon.bank.application.account.management.result.MyAccountsResult;
+import site.donghyeon.bank.application.account.management.view.AccountView;
 
 import java.time.Instant;
 import java.util.List;

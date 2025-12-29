@@ -1,6 +1,6 @@
 package site.donghyeon.bank.infrastructure.jpa.accountTransaction.mapper;
 
-import site.donghyeon.bank.application.account.view.TransactionsView;
+import site.donghyeon.bank.application.account.transaction.view.TransactionsView;
 import site.donghyeon.bank.common.domain.Money;
 import site.donghyeon.bank.domain.accountTransaction.AccountTransaction;
 import site.donghyeon.bank.infrastructure.jpa.accountTransaction.entity.AccountTransactionJpaEntity;

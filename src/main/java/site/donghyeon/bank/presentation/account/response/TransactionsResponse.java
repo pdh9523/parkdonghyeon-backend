@@ -1,7 +1,7 @@
 package site.donghyeon.bank.presentation.account.response;
 
-import site.donghyeon.bank.application.account.result.TransactionsResult;
-import site.donghyeon.bank.application.account.view.TransactionsView;
+import site.donghyeon.bank.application.account.transaction.result.TransactionsResult;
+import site.donghyeon.bank.application.account.transaction.view.TransactionsView;
 import site.donghyeon.bank.domain.accountTransaction.enums.TransactionType;
 
 import java.time.Instant;

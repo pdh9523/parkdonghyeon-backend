@@ -1,7 +1,7 @@
 package site.donghyeon.bank.presentation.account.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import site.donghyeon.bank.application.account.command.OpenAccountCommand;
+import site.donghyeon.bank.application.account.management.command.OpenAccountCommand;
 import site.donghyeon.bank.presentation.common.resolver.CurrentUser;
 
 import java.util.UUID;

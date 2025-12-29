@@ -2,7 +2,7 @@ package site.donghyeon.bank.infrastructure.messaging.rabbitmq.deposit;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
-import site.donghyeon.bank.application.account.task.DepositTask;
+import site.donghyeon.bank.application.account.operation.task.DepositTask;
 
 @Component
 public class DepositPublisher {

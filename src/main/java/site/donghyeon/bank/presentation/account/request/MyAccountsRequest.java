@@ -1,6 +1,6 @@
 package site.donghyeon.bank.presentation.account.request;
 
-import site.donghyeon.bank.application.account.query.MyAccountsQuery;
+import site.donghyeon.bank.application.account.management.query.MyAccountsQuery;
 
 import java.util.UUID;
 

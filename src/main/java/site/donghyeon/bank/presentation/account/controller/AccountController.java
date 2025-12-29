@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import site.donghyeon.bank.application.account.AccountTransactionUseCase;
-import site.donghyeon.bank.application.account.AccountUseCase;
-import site.donghyeon.bank.application.account.AccountOperationUseCase;
+import site.donghyeon.bank.application.account.transaction.AccountTransactionUseCase;
+import site.donghyeon.bank.application.account.management.AccountManagementUseCase;
+import site.donghyeon.bank.application.account.operation.AccountOperationUseCase;
 import site.donghyeon.bank.domain.accountTransaction.enums.LimitType;
 import site.donghyeon.bank.presentation.account.request.*;
 import site.donghyeon.bank.presentation.account.response.*;
@@ -22,16 +22,16 @@ import java.util.UUID;
 @Tag(name = "계좌", description = "계좌 관련 API 입니다.")
 public class AccountController {
 
-    private final AccountUseCase accountUseCase;
+    private final AccountManagementUseCase accountManagementUseCase;
     private final AccountOperationUseCase accountOperationUseCase;
     private final AccountTransactionUseCase accountTransactionUseCase;
 
     public AccountController(
-            AccountUseCase accountUseCase,
+            AccountManagementUseCase accountManagementUseCase,
             AccountOperationUseCase accountOperationUseCase,
             AccountTransactionUseCase accountTransactionUseCase
     ) {
-        this.accountUseCase = accountUseCase;
+        this.accountManagementUseCase = accountManagementUseCase;
         this.accountOperationUseCase = accountOperationUseCase;
         this.accountTransactionUseCase = accountTransactionUseCase;
     }
@@ -47,7 +47,7 @@ public class AccountController {
     ) {
         return ResponseEntity.ok(
                 MyAccountsResponse.from(
-                    accountUseCase.getMyAccounts(MyAccountsRequest.from(currentUser.userId()).toQuery())
+                    accountManagementUseCase.getMyAccounts(MyAccountsRequest.from(currentUser.userId()).toQuery())
                 )
         );
     }
@@ -63,7 +63,7 @@ public class AccountController {
     ) {
         return ResponseEntity.ok(
                 OpenAccountResponse.from(
-                        accountUseCase.openAccount(OpenAccountRequest.from(currentUser).toCommand())
+                        accountManagementUseCase.openAccount(OpenAccountRequest.from(currentUser).toCommand())
                 )
         );
     }
@@ -78,7 +78,7 @@ public class AccountController {
             @GetClaims CurrentUser currentUser,
             @RequestBody CloseAccountRequest request
     ) {
-        accountUseCase.closeAccount(request.toCommand(currentUser.userId()));
+        accountManagementUseCase.closeAccount(request.toCommand(currentUser.userId()));
         return ResponseEntity.noContent().build();
     }
 

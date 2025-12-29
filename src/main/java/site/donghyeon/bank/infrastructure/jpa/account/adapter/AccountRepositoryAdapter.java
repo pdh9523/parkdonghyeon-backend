@@ -1,9 +1,9 @@
 package site.donghyeon.bank.infrastructure.jpa.account.adapter;
 
 import org.springframework.stereotype.Repository;
-import site.donghyeon.bank.application.account.view.AccountView;
+import site.donghyeon.bank.application.account.management.view.AccountView;
 import site.donghyeon.bank.domain.account.Account;
-import site.donghyeon.bank.application.account.repository.AccountRepository;
+import site.donghyeon.bank.application.account.support.repository.AccountRepository;
 import site.donghyeon.bank.infrastructure.jpa.account.entity.AccountJpaEntity;
 import site.donghyeon.bank.infrastructure.jpa.account.mapper.AccountMapper;
 

@@ -1,6 +1,6 @@
 package site.donghyeon.bank.presentation.account.response;
 
-import site.donghyeon.bank.application.account.result.AccountLimitResult;
+import site.donghyeon.bank.application.account.transaction.result.AccountLimitResult;
 
 public record AccountLimitResponse(
     long limit

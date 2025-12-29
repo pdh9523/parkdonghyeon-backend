@@ -2,7 +2,7 @@ package site.donghyeon.bank.infrastructure.messaging.rabbitmq.transfer;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
-import site.donghyeon.bank.application.account.task.TransferTask;
+import site.donghyeon.bank.application.account.operation.task.TransferTask;
 
 @Component
 public class TransferPublisher {

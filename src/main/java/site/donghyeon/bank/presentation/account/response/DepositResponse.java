@@ -1,7 +1,7 @@
 package site.donghyeon.bank.presentation.account.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import site.donghyeon.bank.application.account.result.DepositResult;
+import site.donghyeon.bank.application.account.operation.result.DepositResult;
 
 import java.util.UUID;
 

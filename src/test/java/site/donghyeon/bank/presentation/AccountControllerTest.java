@@ -20,8 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import site.donghyeon.bank.application.account.AccountUseCase;
-import site.donghyeon.bank.application.account.result.OpenAccountResult;
+import site.donghyeon.bank.application.account.management.AccountManagementUseCase;
+import site.donghyeon.bank.application.account.management.result.OpenAccountResult;
 import site.donghyeon.bank.common.domain.Money;
 import site.donghyeon.bank.presentation.account.controller.AccountController;
 import site.donghyeon.bank.presentation.account.request.CloseAccountRequest;
@@ -34,7 +34,7 @@ class AccountControllerTest {
     private static final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     @Mock
-    private AccountUseCase accountUseCase;
+    private AccountManagementUseCase accountManagementUseCase;
 
     @InjectMocks
     private AccountController accountController;
@@ -50,7 +50,7 @@ class AccountControllerTest {
 
     @Test
     void 계좌_개설_성공시_200과_응답() throws Exception {
-        when(accountUseCase.openAccount(any())).thenReturn(new OpenAccountResult(TEST_ACCOUNT_ID, Money.zero()));
+        when(accountManagementUseCase.openAccount(any())).thenReturn(new OpenAccountResult(TEST_ACCOUNT_ID, Money.zero()));
         OpenAccountRequest request = new OpenAccountRequest(TEST_USER_ID);
 
         MvcResult result = mockMvc.perform(post("/account")
@@ -64,7 +64,7 @@ class AccountControllerTest {
 
     @Test
     void 계좌_해지_성공시_204() throws Exception {
-        doNothing().when(accountUseCase).closeAccount(any());
+        doNothing().when(accountManagementUseCase).closeAccount(any());
         CloseAccountRequest request = new CloseAccountRequest(TEST_ACCOUNT_ID);
 
         mockMvc.perform(delete("/account")

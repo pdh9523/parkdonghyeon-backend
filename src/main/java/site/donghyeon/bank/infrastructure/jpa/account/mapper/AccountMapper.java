@@ -1,6 +1,6 @@
 package site.donghyeon.bank.infrastructure.jpa.account.mapper;
 
-import site.donghyeon.bank.application.account.view.AccountView;
+import site.donghyeon.bank.application.account.management.view.AccountView;
 import site.donghyeon.bank.common.domain.Money;
 import site.donghyeon.bank.domain.account.Account;
 import site.donghyeon.bank.infrastructure.jpa.account.entity.AccountJpaEntity;
