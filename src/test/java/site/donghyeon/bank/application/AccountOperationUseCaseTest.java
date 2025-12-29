@@ -80,7 +80,7 @@ public class AccountOperationUseCaseTest {
 
     @Test
     void 출금_요청_테스트() {
-        WithdrawalCommand command = new WithdrawalCommand(TEST_ACCOUNT_ID, 10_000);
+        WithdrawalCommand command = new WithdrawalCommand(TEST_USER_ID, TEST_ACCOUNT_ID, 10_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(withdrawalLimitCache.checkWithdrawalLimit(TEST_ACCOUNT_ID))
@@ -93,7 +93,7 @@ public class AccountOperationUseCaseTest {
 
     @Test
     void 이체_요청_테스트() {
-        TransferCommand command = new TransferCommand(TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 1_000);
+        TransferCommand command = new TransferCommand(TEST_USER_ID, TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 1_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(accountRepository.existsById(OTHER_ACCOUNT_ID)).willReturn(true);
@@ -107,39 +107,39 @@ public class AccountOperationUseCaseTest {
 
     @Test
     void 출금_한도_초과_테스트() {
-        WithdrawalCommand command = new WithdrawalCommand(TEST_ACCOUNT_ID, 10_000);
+        WithdrawalCommand command = new WithdrawalCommand(TEST_USER_ID, TEST_ACCOUNT_ID, 5_000);
 
+        given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(withdrawalLimitCache.checkWithdrawalLimit(TEST_ACCOUNT_ID))
                 .willReturn(new Money(1_000_000));
 
         assertThatThrownBy(() -> accountOperationService.withdrawal(command))
                 .isInstanceOf(WithdrawalLimitExceededException.class)
-                .hasMessageContaining("(spent: 1000000, requested: 10000)");
+                .hasMessageContaining("(spent: 1000000, requested: 5000)");
 
         then(withdrawalPublisher).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void 이체_한도_초과_테스트() {
-        TransferCommand command = new TransferCommand(TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 10_000);
+        TransferCommand command = new TransferCommand(TEST_USER_ID, TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 5_000);
 
+        given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
         given(transferLimitCache.checkTransferLimit(TEST_ACCOUNT_ID))
                 .willReturn(new Money(3_000_000));
 
         assertThatThrownBy(() -> accountOperationService.transfer(command))
                 .isInstanceOf(TransferLimitExceededException.class)
-                .hasMessageContaining("(spent: 3000000, requested: 10000)");
+                .hasMessageContaining("(spent: 3000000, requested: 5000)");
 
         then(transferPublisher).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void 잔고_초과_출금_테스트() {
-        WithdrawalCommand command = new WithdrawalCommand(TEST_ACCOUNT_ID, 100_000);
+        WithdrawalCommand command = new WithdrawalCommand(TEST_USER_ID, TEST_ACCOUNT_ID, 100_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(withdrawalLimitCache.checkWithdrawalLimit(TEST_ACCOUNT_ID))
-                .willReturn(Money.zero());
 
         assertThatThrownBy(() -> accountOperationService.withdrawal(command))
                 .isInstanceOf(InsufficientBalanceException.class);
@@ -149,12 +149,9 @@ public class AccountOperationUseCaseTest {
 
     @Test
     void 잔고_초과_이체_테스트() {
-        TransferCommand command = new TransferCommand(TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 10_000);
+        TransferCommand command = new TransferCommand(TEST_USER_ID, TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 10_000);
 
         given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
-        given(accountRepository.existsById(OTHER_ACCOUNT_ID)).willReturn(true);
-        given(transferLimitCache.checkTransferLimit(TEST_ACCOUNT_ID))
-                .willReturn(Money.zero());
 
         assertThatThrownBy(() -> accountOperationService.transfer(command))
                 .isInstanceOf(InsufficientBalanceException.class);
