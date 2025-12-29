@@ -65,7 +65,7 @@ class AccountControllerTest {
     @Test
     void 계좌_해지_성공시_204() throws Exception {
         doNothing().when(accountUseCase).closeAccount(any());
-        CloseAccountRequest request = new CloseAccountRequest(TEST_USER_ID, TEST_ACCOUNT_ID);
+        CloseAccountRequest request = new CloseAccountRequest(TEST_ACCOUNT_ID);
 
         mockMvc.perform(delete("/account")
                         .contentType(MediaType.APPLICATION_JSON)
