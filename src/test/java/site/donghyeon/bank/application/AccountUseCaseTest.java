@@ -1,9 +1,10 @@
 package site.donghyeon.bank.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import site.donghyeon.bank.application.account.exception.RemainingBalanceException;
 import site.donghyeon.bank.application.account.service.AccountService;
 import site.donghyeon.bank.application.account.command.CloseAccountCommand;
 import site.donghyeon.bank.application.account.command.OpenAccountCommand;
@@ -56,5 +58,17 @@ class AccountUseCaseTest {
         assertThat(existing.getStatus()).isEqualTo(AccountStatus.CLOSED);
         verify(accountRepository).findById(TEST_ACCOUNT_ID);
         verify(accountRepository).save(existing);
+    }
+
+    @Test
+    void 잔액_있는_계좌_해지_불가() {
+        Account existing = new Account(TEST_ACCOUNT_ID, TEST_USER_ID, new Money(1000), AccountStatus.OPEN);
+
+        when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Optional.of(existing));
+
+        assertThatThrownBy(() -> accountService.closeAccount(new CloseAccountCommand(TEST_USER_ID, TEST_ACCOUNT_ID)))
+                .isInstanceOf(RemainingBalanceException.class);
+
+        then(accountRepository).should(never()).save(any());
     }
 }

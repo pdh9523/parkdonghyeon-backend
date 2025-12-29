@@ -20,6 +20,7 @@ import site.donghyeon.bank.application.account.task.WithdrawalTask;
 import site.donghyeon.bank.common.domain.Money;
 import site.donghyeon.bank.domain.account.Account;
 import site.donghyeon.bank.domain.account.enums.AccountStatus;
+import site.donghyeon.bank.domain.account.exception.AccountAccessDeniedException;
 import site.donghyeon.bank.domain.account.exception.InsufficientBalanceException;
 import site.donghyeon.bank.infrastructure.messaging.rabbitmq.deposit.DepositPublisher;
 import site.donghyeon.bank.infrastructure.messaging.rabbitmq.transfer.TransferPublisher;
@@ -36,9 +37,10 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 public class AccountOperationUseCaseTest {
 
-    private static final UUID TEST_ACCOUNT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
-    private static final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID TEST_ACCOUNT_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     private static final UUID OTHER_ACCOUNT_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    private static final UUID OTHER_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
     private static final Account TEST_ACCOUNT = new Account(
             TEST_ACCOUNT_ID,
@@ -155,6 +157,30 @@ public class AccountOperationUseCaseTest {
 
         assertThatThrownBy(() -> accountOperationService.transfer(command))
                 .isInstanceOf(InsufficientBalanceException.class);
+
+        then(transferPublisher).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void 타인_계좌_출금_시도() {
+        WithdrawalCommand command = new WithdrawalCommand(OTHER_USER_ID, TEST_ACCOUNT_ID, 1_000);
+
+        given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
+
+        assertThatThrownBy(() -> accountOperationService.withdrawal(command))
+                .isInstanceOf(AccountAccessDeniedException.class);
+
+        then(withdrawalPublisher).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void 타인_계좌_이체_시도() {
+        TransferCommand command = new TransferCommand(OTHER_USER_ID, TEST_ACCOUNT_ID, OTHER_ACCOUNT_ID, 1_000);
+
+        given(accountRepository.findById(TEST_ACCOUNT_ID)).willReturn(Optional.of(TEST_ACCOUNT));
+
+        assertThatThrownBy(() -> accountOperationService.transfer(command))
+                .isInstanceOf(AccountAccessDeniedException.class);
 
         then(transferPublisher).shouldHaveNoMoreInteractions();
     }

@@ -5,6 +5,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -49,6 +50,9 @@ public class RabbitMQPublisherTest {
     @Container
     @ServiceConnection
     static RabbitMQContainer mq = new RabbitMQContainer("rabbitmq:3-management");
+
+    @MockitoBean
+    SecurityFilterChain securityFilterChain;
 
     @MockitoBean
     DepositListener depositListener;
